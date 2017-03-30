@@ -1,0 +1,28 @@
+*~
+
+# lia/ nia/
+*.cache
+
+# coq files
+*.vo
+*.v.d
+*.glob
+*.dv
+*.aux
+
+# ocaml files
+src/vpl_plugin.cmxs
+*.o
+*.a
+*.cma
+*.cmi
+*.cmo
+*.cmx
+*.cmxa
+*.ml.d
+*.mllib.d
+*.ml4.d
+*.mli.d
+
+# misc
+tactic.mk

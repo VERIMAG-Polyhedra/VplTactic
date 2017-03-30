@@ -1,0 +1,14 @@
+-I src
+-I test-suite
+-R theories "VplTactic"
+src/reification.mli
+src/reification.ml
+src/vpltactics.ml4
+src/vpl_plugin.mllib
+theories/Input.v
+theories/Output.v
+theories/Reduction.v
+theories/Tactic.v
+test-suite/Test.v
+test-suite/Demo.v
+test-suite/Examples.v
