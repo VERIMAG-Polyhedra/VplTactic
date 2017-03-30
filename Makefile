@@ -1,6 +1,6 @@
 # requires: coq8.6
 
-.PHONY: clean tactic cacheclean test archclean
+.PHONY: clean tactic cacheclean test archclean install uninstall
 
 MLTACTICOPT:=-rectypes -thread -package vpl -linkpkg
 
@@ -15,6 +15,12 @@ tactic: tactic.mk
 
 tactic.mk: _CoqProject
 	coq_makefile -f _CoqProject -o tactic.mk
+
+install: tactic
+	$(MAKE) -f tactic.mk install
+
+uninstall: tactic.mk
+	$(MAKE) -f tactic.mk uninstall || echo "skip last errors..."
 
 coqide:
 	@echo "coqide -R theories VplTactic -I src"
