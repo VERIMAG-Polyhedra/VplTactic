@@ -24,10 +24,14 @@ Developed at Verimag and supported by ANR Verasco and ERC Stator.
 	  __required version >= 4.61__
 		
    * [eigen](http://eigen.tuxfamily.org/)
+	  __tested with version 3.3.3__
          (automatically installed by depexts on debian or ubuntu)
 	  _debian package libeigen3-dev_
-	  __tested with version 3.3.3__
-		
+
+   * [coq](https://coq.inria.fr/)
+        __required version 8.6__  
+       (available in OPAM)
+
 2. Installation
 	
    First, add the following repository in your opam system:
@@ -40,10 +44,72 @@ Developed at Verimag and supported by ANR Verasco and ERC Stator.
 
   This will also install other `opam-vpl` packages.
 
-## Using VplTactic.
+## Using VplTactic
 
-TODO
+First, add the two following lines at the head of your Coq files:
 
-## Browsing the sources.
+    Require Import VplTactic.Tactic.
+    Add Field Qcfield: Qcft (decidable Qc_eq_bool_correct, constants [vpl_cte]).
 
-TODO
+Module `VplTactic.Tactic` provides several tactic. 
+The most complex is `vpl_auto`.
+
+    Lemma ex_intro (x: Qc) (f: Qc -> Qc):
+      x <= 1
+      -> (f x) < (f 1)
+      -> x < 1.
+    Proof.
+      vpl_auto.
+    Qed.
+
+Actually, `vpl_auto` is a macro for `vpl_reduce; vpl_post` where `vpl_reduce`
+is the main call to the VPL oracle. It try to find a polyhedron in
+your goal and then, it simplifies this polyhedron.
+
+For example, consider the following goal:
+
+    Goal forall (v1 v2 v3: Qc) (f: Qc -> Qc),
+       f ((v2 - 1)*v3) <> f ((2#3) * v1 * v2)
+       -> v1+3 <= (v2 + v3)
+       -> v1 <= 3*(v3-v2-1)
+       -> 2*v1 < 3*(v3-2).
+
+Tactic `vpl_reduce` simplifies this goal into
+  
+    H : f ((v2 - (1 # 1)) * v3) = f ((2 # 3) * v1 * v2) -> False
+    ============================
+    v1 = (-3 # 1) + (3 # 2) * v3
+    -> v2 = (1 # 2) * v3
+    -> False
+
+Hence, the linear inequalities of the initial goal have been replaced by linear equalities.
+Then, `vpl_post` proves the remaining goal by combininig `auto` and `field` tactic. 
+
+Tactic `vpl` is a slight variant of `vpl_reduce` which injects the discovered equalities in the remaining goal:
+it is a macro for `vpl_reduce; vpl_inject`.
+
+If needed, you may also directly invoke some subcomponent of tactic `vpl_reduce`, see file `theories/Tactic.v`.
+You may also find examples in file `test-suite/*.v`.
+
+An introducing paper should be soon available.
+
+## Browsing the sources
+
+Following, usual conventions in Coq projects, directories are organized as follows:
+
+* `src/` contains `ocaml` code for the plugin (reification + oracle wrapper).
+
+* `theories/` contains the `coq` code of `VplTactic`
+
+   - `Input.v` finds a polyhedron from the goal
+
+   - `Output.v` exports back the reduced polyhedron into the goal
+
+   - `Reduction.v` transforms the input goal into the output goal (thanks to a "script" provided by the VPL oracle)
+
+   - `Tactic.v` is the main file
+
+* `test-suite/` contains examples.
+
+Currently, the code is not really documented (sorry!). It includes a few comments inside however.
+
