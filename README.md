@@ -51,7 +51,7 @@ First, add the two following lines at the head of your Coq files:
     Require Import VplTactic.Tactic.
     Add Field Qcfield: Qcft (decidable Qc_eq_bool_correct, constants [vpl_cte]).
 
-Module `VplTactic.Tactic` provides several tactic. 
+Module `VplTactic.Tactic` provides several tactics.
 The most complex is `vpl_auto`.
 
     Lemma ex_intro (x: Qc) (f: Qc -> Qc):
@@ -74,7 +74,7 @@ For example, consider the following goal:
        -> v1 <= 3*(v3-v2-1)
        -> 2*v1 < 3*(v3-2).
 
-Tactic `vpl_reduce` simplifies this goal into
+The `vpl_reduce` tactic simplifies this goal into
   
     H : f ((v2 - (1 # 1)) * v3) = f ((2 # 3) * v1 * v2) -> False
     ============================
@@ -83,12 +83,12 @@ Tactic `vpl_reduce` simplifies this goal into
     -> False
 
 Hence, the linear inequalities of the initial goal have been replaced by linear equalities.
-Then, `vpl_post` proves the remaining goal by combininig `auto` and `field` tactic. 
+Then, `vpl_post` proves the remaining goal by combininig `auto` and `field` tactics.
 
-Tactic `vpl` is a slight variant of `vpl_reduce` which rewrites the discovered equalities in the remaining goal:
+The `vpl` tactic is a slight variant of `vpl_reduce` which rewrites the discovered equalities in the remaining goal:
 it is a macro for `vpl_reduce; vpl_rewrite`.
 
-If needed, you may also directly invoke some subcomponent of tactic `vpl_reduce`, see file `theories/Tactic.v`.
+If needed, you may also directly invoke some subcomponent of `vpl_reduce`, see file `theories/Tactic.v`.
 You may also find examples in file `test-suite/*.v`.
 
 An introducing paper should be soon available.
