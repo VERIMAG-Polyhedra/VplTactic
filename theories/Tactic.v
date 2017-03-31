@@ -50,7 +50,7 @@ Ltac vpl_trivial :=
   vpl_reduce;
   trivial.
 
-Ltac vpl_inject1 :=
+Ltac vpl_rewrite1 :=
   match goal with
   | |- _ = _ -> _ => 
     let H := fresh "vpl" in
@@ -58,8 +58,8 @@ Ltac vpl_inject1 :=
     rewrite? H in * |- *
   end.
 
-Ltac vpl_inject :=
- repeat vpl_inject1.
+Ltac vpl_rewrite :=
+ repeat vpl_rewrite1.
 
 Ltac vpl_cte t :=
   match t with
@@ -76,11 +76,11 @@ Hint Extern 4 (_ < _)%Qc => vpl_trivial: vpl.
 Hint Extern 4 False => vpl_trivial: vpl.
 Hint Resolve f_equal: vpl.
 
-Ltac vpl := vpl_reduce; (trivial || vpl_inject).
+Ltac vpl := vpl_reduce; (trivial || vpl_rewrite).
 
 Ltac vpl_post :=
   trivial || 
-  (vpl_inject;
+  (vpl_rewrite;
    intuition auto with vpl).
 
 Ltac vpl_auto :=

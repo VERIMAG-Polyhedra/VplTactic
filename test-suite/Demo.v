@@ -35,7 +35,7 @@ Proof.
 (*
   intros.
   vpl_reduce.
-  vpl_inject.
+  vpl_rewrite.
   congruence.
 *)
 Qed.
@@ -121,7 +121,7 @@ Proof.
 (*
   intros.
   vpl_reduce.
-  vpl_inject.
+  vpl_rewrite.
   field.
 *)
 Qed.
@@ -148,7 +148,7 @@ Proof.
   vpl_auto.
 (*  intros.
   vpl_reduce.
-  vpl_inject.
+  vpl_rewrite.
   auto.
 *)
 Qed.
@@ -176,7 +176,7 @@ Proof.
   vpl_auto.
 (*  intros.
   vpl_reduce.
-  vpl_inject.
+  vpl_rewrite.
   field. *)
 Qed.
 
@@ -205,7 +205,7 @@ Proof.
   vpl_grab.
   vpl_oracle a.
   vpl_compute a.
-  vpl_inject.
+  vpl_rewrite.
   intros.
   lapplys H.
   - vpl_oracle a. vpl_compute a. trivial.
@@ -238,7 +238,7 @@ Proof.
 (*
   vpl_oracle a.
   vpl_compute a.
-  vpl_inject.
+  vpl_rewrite.
   apply H.
   apply f_equal.
   field.

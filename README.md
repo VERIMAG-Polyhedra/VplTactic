@@ -85,8 +85,8 @@ Tactic `vpl_reduce` simplifies this goal into
 Hence, the linear inequalities of the initial goal have been replaced by linear equalities.
 Then, `vpl_post` proves the remaining goal by combininig `auto` and `field` tactic. 
 
-Tactic `vpl` is a slight variant of `vpl_reduce` which injects the discovered equalities in the remaining goal:
-it is a macro for `vpl_reduce; vpl_inject`.
+Tactic `vpl` is a slight variant of `vpl_reduce` which rewrites the discovered equalities in the remaining goal:
+it is a macro for `vpl_reduce; vpl_rewrite`.
 
 If needed, you may also directly invoke some subcomponent of tactic `vpl_reduce`, see file `theories/Tactic.v`.
 You may also find examples in file `test-suite/*.v`.
