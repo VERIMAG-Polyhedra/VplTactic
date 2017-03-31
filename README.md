@@ -4,7 +4,7 @@ Current version: 0.2
 
 ## Introduction
 
-The [VPL](https://github.com/VERIMAG-Polyhedra) is an Ocaml library allowing to compute with convex polyhedra. 
+The [VPL](https://github.com/VERIMAG-Polyhedra/VPL) is an Ocaml library allowing to compute with convex polyhedra. 
 It provides standard operators -- certified in Coq -- to use this library as an abstract domain of polyhedra.
 
 The VplTactic is a tactic to solve arithmetic goals in Coq.
@@ -18,7 +18,7 @@ Developed at Verimag and supported by ANR Verasco and ERC Stator.
 
 ## Installation through [opam](https://opam.ocaml.org/) 
 
-1. External Dependencies for [VPL](https://github.com/VERIMAG-Polyhedra)
+1. External Dependencies for [VPL](https://github.com/VERIMAG-Polyhedra/VPL)
 	
    * [glpk](https://www.gnu.org/software/glpk/)
 	  __required version >= 4.61__
@@ -95,7 +95,7 @@ An introducing paper should be soon available.
 
 ## Browsing the sources
 
-Following, usual conventions in Coq projects, directories are organized as follows:
+Following usual conventions in Coq projects, directories are organized as follows:
 
 * `src/` contains `ocaml` code for the plugin (reification + oracle wrapper).
 
@@ -111,5 +111,5 @@ Following, usual conventions in Coq projects, directories are organized as follo
 
 * `test-suite/` contains examples.
 
-Currently, the code is not really documented (sorry!). It includes a few comments inside however.
+Currently, the code is not really documented (sorry!). It only includes a few comments inside.
 
