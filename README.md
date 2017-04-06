@@ -44,6 +44,9 @@ Developed at Verimag and supported by ANR Verasco and ERC Stator.
 
   This will also install other `opam-vpl` packages.
 
+In case of trouble with this `opam` install, you should read [this](https://github.com/VERIMAG-Polyhedra/opam-vpl/blob/master/README.md#using-the-vpl-on-a-vagrantvirtualbox-virtual-machine).
+
+
 ## Using VplTactic
 
 First, add the two following lines at the head of your Coq files:
