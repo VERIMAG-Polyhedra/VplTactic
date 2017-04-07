@@ -18,15 +18,9 @@ Developed at Verimag and supported by ANR Verasco and ERC Stator.
 
 ## Installation through [opam](https://opam.ocaml.org/) 
 
-1. External Dependencies for [VPL](https://github.com/VERIMAG-Polyhedra/VPL)
+1. Dependencies 
 	
-   * [glpk](https://www.gnu.org/software/glpk/)
-	  __required version >= 4.61__
-		
-   * [eigen](http://eigen.tuxfamily.org/)
-	  __tested with version 3.3.3__
-         (automatically installed by depexts on debian or ubuntu)
-	  _debian package libeigen3-dev_
+   * See [External Dependencies](https://github.com/VERIMAG-Polyhedra/VPL/blob/master/README.md#installation) of [VPL](https://github.com/VERIMAG-Polyhedra/VPL)
 
    * [coq](https://coq.inria.fr/)
         __required version 8.6__  
