@@ -88,7 +88,7 @@ it is a macro for `vpl_reduce; vpl_rewrite`.
 If needed, you may also directly invoke some subcomponent of `vpl_reduce`, see file `theories/Tactic.v`.
 You may also find examples in file `test-suite/*.v`.
 
-An introducing paper should be soon available.
+A [HAL preprint](https://hal.archives-ouvertes.fr/hal-01505598) presents this tactic in details.
 
 ## Browsing the sources
 
