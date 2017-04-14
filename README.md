@@ -20,7 +20,7 @@ examples below. Currently, this tactic is highly experimental and it only works 
 which is a canonical type of rationals.
 
 If you find a bug or have any comment, please
-[contact us](mailto://verimag-polyhedra-developers@univ-grenoble-alpes.fr)
+[contact us](mailto:verimag-polyhedra-developers@univ-grenoble-alpes.fr)
 
 Main Contributors: Alexandre Maréchal and Sylvain Boulmé.
 Developed at [Verimag](http://www-verimag.imag.fr/)
