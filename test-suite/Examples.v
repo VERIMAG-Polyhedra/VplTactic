@@ -55,6 +55,21 @@ Proof.
 *)
 Qed.
 
+
+(* A simpler version provable on Z *)
+Lemma simpler_bigex A (f:A -> Qc) (g:Qc -> A) (v1 v2 v3 v4: Qc):
+  6*v1 - v2 - 10*v3 + 7*(f(g v1) + 1) <= -1
+  -> 3*(f(g v1) - 2*v3) + 4 >= v2 -4*v1
+  -> 8*v1 - 3*v2 - 4*v3 - f(g v1) <= 2
+  -> 11*v1 - 4*v2 > 3
+  -> v3 > -1
+  -> v4 >= 0
+  -> g((11 - v2 + 13*v4)) <> g(13 * (v3+v4)) 
+  -> 3 + 4*v2 + 5*v3 + f(g v1) > 11*v1.
+Proof.
+  vpl_auto.
+Qed.
+
 Require Import Psatz.
 Lemma ex_intro_lia (x: Z) (f: Z -> Z):
   (x <= 1
@@ -90,14 +105,14 @@ Proof.
   omega.
 Qed.
 
-Lemma bigex_omega_lia A (f:A -> Z) (g:Z -> A) (v1 v2 v3 v4: Z):
+Lemma simpler_bigex_lia A (f:A -> Z) (g:Z -> A) (v1 v2 v3 v4: Z):
   (6*v1 - v2 - 10*v3 + 7*(f(g v1) + 1) <= -1
   -> 3*(f(g v1) - 2*v3) + 4 >= v2 -4*v1
   -> 8*v1 - 3*v2 - 4*v3 - f(g v1) <= 2
   -> 11*v1 - 4*v2 > 3
   -> v3 > -1
   -> v4 >= 0
-  -> g((11 - v2 + 13*v4) / (v3+v4)) <> g(13) 
+  -> g((11 - v2 + 13*v4)) <> g(13 * (v3+v4)) 
   -> 3 + 4*v2 + 5*v3 + f(g v1) > 11*v1)%Z.
 Proof.
   intros.
