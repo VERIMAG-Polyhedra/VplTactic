@@ -120,3 +120,24 @@ Proof.
   try omega.
   idtac.
 Abort.
+
+(* Example from Figure 1 in
+
+Modular SMT Proofs
+for Fast Reflexive Checking Inside Coq
+
+CPP 2011
+
+Besson, Cornilleau, Pichardie
+
+
+*)
+
+Lemma besson_example (x y z: Qc) (f: Qc -> Qc):
+  f((f x) - (f y)) <> (f z)
+  -> x <= y
+  -> y+z <= x
+  -> z < 0.
+Proof.
+  vpl_auto.
+Qed.
