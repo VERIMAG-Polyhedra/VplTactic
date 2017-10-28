@@ -16,21 +16,21 @@ exception DecompositionError of string
 
 (** [init_constant path cst] returns the constr corresponding to
     [path.cst]. *)
-val init_constant : string list -> string -> Term.constr Lazy.t
+val init_constant : string list -> string -> EConstr.constr Lazy.t
 
 (** General purpose functions *)
 
 (** [decomp_term c] returns a user-view of a term (as defined in the
     module kernel/term.mli). *)
-val decomp_term : Term.constr -> (Term.constr , Term.types) Term.kind_of_term
+val decomp_term : Evd.evar_map -> EConstr.constr -> (EConstr.constr , EConstr.types, EConstr.ESorts.t, EConstr.EInstance.t) Constr.kind_of_term
 
 (** [lapp c args] build the application of the lazy constr [c] to the
     array of arguments [args]. This is a handy shortcut. *)
-val lapp : Term.constr lazy_t -> Term.constr array -> Term.constr
+val lapp : EConstr.constr lazy_t -> EConstr.constr array -> EConstr.constr
 
-val print_debug: Term.constr -> unit
+val print_debug: Environ.env -> Evd.evar_map -> EConstr.constr -> unit
 
-val mkLambda: Term.types -> Term.constr -> Term.constr
+val mkLambda: EConstr.types -> EConstr.constr -> EConstr.constr
 
 (** Reified affine term 
 This has almost nothing todo with Coq AST, 
@@ -56,25 +56,25 @@ end
 (** Input of Vpl Library *)
 module Input:
 sig
-  val _rcstr: Term.constr lazy_t
-  val _term: Term.constr lazy_t
-  val tag_cte: Term.constr lazy_t
-  val _Z2Qc: Term.constr lazy_t
+  val _rcstr: EConstr.constr lazy_t
+  val _term: EConstr.constr lazy_t
+  val tag_cte: EConstr.constr lazy_t
+  val _Z2Qc: EConstr.constr lazy_t
     
   type varmap
   type term
 
-  val cte: Term.constr -> term
+  val cte: EConstr.constr -> term
   val var: AffTerm.var -> term
   val add: term -> term -> term
   val sub: term -> term -> term
   val opp: term -> term
   val mul: term -> term -> term
-  val export: term -> Term.constr
+  val export: term -> EConstr.constr
 
   (* [vplGoal l m g] is a short cut for Coq [vplGoal (sem l m) g] *) 
-  val vplGoal: Term.constr -> varmap -> Term.constr -> Term.constr
-  val reify_as_cmpT: Term.constr -> Cstr.cmpT
+  val vplGoal: EConstr.constr -> varmap -> EConstr.constr -> EConstr.constr
+  val reify_as_cmpT: Evd.evar_map -> EConstr.constr -> Cstr.cmpT
 end
   
 (** Reduction of Vpl Library *)
@@ -100,8 +100,8 @@ sig
   val bindHyp: v -> script -> script
   val skipHyp: v -> script -> script
   val run: v -> pedra -> script
-  val export: Term.types -> script -> proof
-  val reduceRun: Term.constr -> proof -> Term.constr
+  val export: EConstr.types -> script -> proof
+  val reduceRun: EConstr.constr -> proof -> EConstr.constr
 end
 
 
@@ -124,7 +124,7 @@ sig
       - If the term [c] is already present in [env], we return its
       index.  
   *)
-  val add : t -> Term.constr -> AffTerm.var
+  val add : t -> EConstr.constr -> AffTerm.var
     
   (** [empty ()] return an empty environment *)
   val empty : unit -> t
@@ -149,48 +149,48 @@ end
 module List:
 sig
   (** [of_list ty l]  *)
-  val of_list:Term.constr -> Term.constr list -> Term.constr
+  val of_list:EConstr.constr -> EConstr.constr list -> EConstr.constr
 
   (* [map ty f l]: but reverse of the order !*)
-  val map: Term.constr -> (Term.constr -> Term.constr) -> Term.constr -> Term.constr
+  val map: Evd.evar_map -> EConstr.constr -> (EConstr.constr -> EConstr.constr) -> EConstr.constr -> EConstr.constr
 end
 
 (** Coq pairs *)
 module Prod:
 sig
   (* [set_fst ty f l]: change fst component of the pair *)
-  val set_fst: Term.constr -> (Term.constr -> Term.constr -> Term.constr) -> Term.constr -> Term.constr
+  val set_fst: Evd.evar_map -> EConstr.constr -> (EConstr.constr -> EConstr.constr -> EConstr.constr) -> EConstr.constr -> EConstr.constr
 end
 
 (** Coq Positive *)
 module Positive:
 sig
   (* raise [RatReifyError] in case of non-closed term *)
-  val reify_as_RatZ: Term.constr -> Rat.Z.t
-  val from_RatZ: Rat.Z.t -> Term.constr
+  val reify_as_RatZ: Evd.evar_map -> EConstr.constr -> Rat.Z.t
+  val from_RatZ: Rat.Z.t -> EConstr.constr
 end
 
 (* Coq Z *) 
 module Z:
 sig
   (* raise [RatReifyError] in case of non-closed term *)
-  val reify_as_RatZ: Term.constr -> Rat.Z.t
-  val from_RatZ: Rat.Z.t -> Term.constr
+  val reify_as_RatZ: Evd.evar_map -> EConstr.constr -> Rat.Z.t
+  val from_RatZ: Rat.Z.t -> EConstr.constr
 end 
   
 (* Coq Qc *) 
 module Qc:
 sig  
-  val _Qcopp: Term.constr lazy_t
-  val _Qcplus: Term.constr lazy_t
-  val _Qcminus: Term.constr lazy_t
-  val _Qcmult: Term.constr lazy_t
-  val _Q2Qc: Term.constr lazy_t
-  val _Qcmake: Term.constr lazy_t
-  val _Qmake: Term.constr lazy_t
+  val _Qcopp: EConstr.constr lazy_t
+  val _Qcplus: EConstr.constr lazy_t
+  val _Qcminus: EConstr.constr lazy_t
+  val _Qcmult: EConstr.constr lazy_t
+  val _Q2Qc: EConstr.constr lazy_t
+  val _Qcmake: EConstr.constr lazy_t
+  val _Qmake: EConstr.constr lazy_t
 
 
   (* raise [RatReifyError] in case of non-closed term *)
-  val reify_as_Rat: Term.constr -> Rat.t
-  val from_Rat: Rat.t -> Term.constr
+  val reify_as_Rat: Evd.evar_map -> EConstr.constr -> Rat.t
+  val from_Rat: Rat.t -> EConstr.constr
 end

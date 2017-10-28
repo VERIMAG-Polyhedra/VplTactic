@@ -26,3 +26,4 @@ src/vpl_plugin.cmxs
 
 # misc
 tactic.mk
+tactic.mk.conf

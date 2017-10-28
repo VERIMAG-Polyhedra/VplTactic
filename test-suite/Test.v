@@ -17,6 +17,8 @@ Proof.
   vpl_auto.
 Qed.
 
+Import VplNotation.
+
 Lemma triv2:  2 < (55 # 33) -> v1 < 1.
 Proof.
   vpl_auto.
@@ -38,10 +40,11 @@ Proof.
   vpl_auto.
 Qed.
 
-Lemma decide4: 2 * v1 <= v2 -> 3 * v3 = 2 * (v1 + v2) -> v3 >= 2 * v1.
+Lemma decide4: 2 * v1 <= v2 -> 3 * v3 = 2 * (v1 + v2) -> v3 >= (2*v1)%Qc.
 Proof.
-  vpl_auto.
-Qed.
+  vpl.
+Admitted.
+(* TODO: Qed.*)
 
 Lemma decide5: v1 < v2 -> v3 > v2 -> (v3 < v4)%Q -> (v5 > v4)%Q -> v1 < v5.
 Proof.
@@ -92,7 +95,8 @@ Parameter sq: Qc -> Qc.
 Lemma decideX: (2*((sq v1)+1)-2*(sq v1))*(sq v1) <= v2 -> 3 * v3 = 2 * ((sq v1) + v2) -> v3 <= v2.
 Proof.
   vpl_auto.
-Qed.
+Admitted.
+(* TODO: Qed. *)
 
 Lemma decideX_omega (sq: Z-> Z) (v1 v2 v3: Z): (2*(sq v1) <= v2 -> 3 * v3 = 2 * ((sq v1) + v2) -> v3 <= v2)%Z.
 Proof.
@@ -150,7 +154,8 @@ Qed.
 Lemma simpl4: 2*v1 <= v2 -> f v2 <> f v3 -> 3*v3 = 2*(v1+v2) -> 2*v1 < v3.
 Proof.
   vpl_auto.
-Qed.
+Admitted.
+(* TODO: Qed.*)
 
 Lemma simpl5:
  (f v3) <> (f v13) -> 

@@ -2,8 +2,11 @@
 (*i camlp4deps: "grammar/grammar.cma" i*)
 DECLARE PLUGIN "vpl_plugin"  
 
-open Constrarg (* WARNING: necessary for "constr" campl4 notation ! *) 
+(*i*)
+open Stdarg (* WARNING: necessary for "constr" campl4 notation ! *) 
+open Ltac_plugin (* WARNING: necessary at the plugin load *)
 open Vpl
+(*i*)
 
 module Rat = Scalar.Rat
 module Vec = Vector.Rat.Positive
@@ -11,46 +14,46 @@ module Var = Var.Positive
 module Cs = Cstr.Rat.Positive
 module Cons = IneqSet.Cons
 
-type compf = Term.constr -> Term.constr
+type compf = EConstr.constr -> EConstr.constr
   
 module R = Reification
 module M = R.Reduction
 
 (***************)
 (* reification *)
-let check_may_cte (t: Term.constr): unit =
-  match R.decomp_term t with
+let check_may_cte (sigma: Evd.evar_map) (t: EConstr.constr): unit =
+  match R.decomp_term sigma t with
   | Term.App(head, _) when
-     (Term.eq_constr head (Lazy.force R.Input.tag_cte) ||
-        Term.eq_constr head (Lazy.force R.Qc._Qcmake) ||
-     Term.eq_constr head (Lazy.force R.Input._Z2Qc) ) -> ()
-  | Term.App(head, args) when Term.eq_constr head (Lazy.force R.Qc._Q2Qc) -> (
-     match R.decomp_term args.(0) with
-     |  Term.App(head, args) when Term.eq_constr head (Lazy.force R.Qc._Qmake) -> ()
+     (EConstr.eq_constr sigma head (Lazy.force R.Input.tag_cte) ||
+        EConstr.eq_constr sigma head (Lazy.force R.Qc._Qcmake) ||
+     EConstr.eq_constr sigma head (Lazy.force R.Input._Z2Qc) ) -> ()
+  | Term.App(head, args) when EConstr.eq_constr sigma head (Lazy.force R.Qc._Q2Qc) -> (
+     match R.decomp_term sigma args.(0) with
+     |  Term.App(head, args) when EConstr.eq_constr sigma head (Lazy.force R.Qc._Qmake) -> ()
      | _ -> raise R.RatReifyError)  
   | _ -> raise R.RatReifyError
 
-let addvar (m: R.Varmap.t) (t: Term.constr):  R.Input.term * R.AffTerm.t =
+let addvar (m: R.Varmap.t) (t: EConstr.constr):  R.Input.term * R.AffTerm.t =
   let x = R.Varmap.add m t in (R.Input.var x, R.AffTerm.var x)
       
-let rec reify_aff (comp:compf) (m: R.Varmap.t) (t: Term.constr): R.Input.term * R.AffTerm.t =
+let rec reify_aff (sigma: Evd.evar_map) (comp:compf) (m: R.Varmap.t) (t: EConstr.constr): R.Input.term * R.AffTerm.t =
   (* R.print_debug t; *)
-  match R.decomp_term t with  
-  | Term.App(head, args) when Term.eq_constr head (Lazy.force R.Qc._Qcplus) -> (
-     let (t1,a1) = reify_aff comp m args.(0) in
-     let (t2,a2) = reify_aff comp m args.(1) in
+  match R.decomp_term sigma t with  
+  | Term.App(head, args) when EConstr.eq_constr sigma head (Lazy.force R.Qc._Qcplus) -> (
+     let (t1,a1) = reify_aff sigma comp m args.(0) in
+     let (t2,a2) = reify_aff sigma comp m args.(1) in
      (R.Input.add t1 t2, R.AffTerm.add a1 a2))
-  | Term.App(head, args) when Term.eq_constr head (Lazy.force R.Qc._Qcopp) -> (
-     let (t0,a0) = reify_aff comp m args.(0) in
+  | Term.App(head, args) when EConstr.eq_constr sigma head (Lazy.force R.Qc._Qcopp) -> (
+     let (t0,a0) = reify_aff sigma comp m args.(0) in
      (R.Input.opp t0, R.AffTerm.opp a0))
-  | Term.App(head, args) when Term.eq_constr head (Lazy.force R.Qc._Qcminus) -> (
-     let (t1,a1) = reify_aff comp m args.(0) in
-     let (t2,a2) = reify_aff comp m args.(1) in
+  | Term.App(head, args) when EConstr.eq_constr sigma head (Lazy.force R.Qc._Qcminus) -> (
+     let (t1,a1) = reify_aff sigma comp m args.(0) in
+     let (t2,a2) = reify_aff sigma comp m args.(1) in
      (R.Input.sub t1 t2, R.AffTerm.sub a1 a2))
-  | Term.App(head, args) when Term.eq_constr head (Lazy.force R.Qc._Qcmult) -> (
+  | Term.App(head, args) when EConstr.eq_constr sigma head (Lazy.force R.Qc._Qcmult) -> (
      let s = R.Varmap.get_state m in
-     let (t1, a1) = reify_aff comp m args.(0) in
-     let (t2, a2) = reify_aff comp m args.(1) in
+     let (t1, a1) = reify_aff sigma comp m args.(0) in
+     let (t2, a2) = reify_aff sigma comp m args.(1) in
      match R.AffTerm.is_cte a1 with
      | Some c1 ->
        (R.Input.mul t1 t2, R.AffTerm.mul c1 a2)
@@ -63,8 +66,8 @@ let rec reify_aff (comp:compf) (m: R.Varmap.t) (t: Term.constr): R.Input.term * 
           addvar m t)))
   | _ ->
      try
-       check_may_cte t;
-       let c = R.Qc.reify_as_Rat (comp t) in
+       check_may_cte sigma t;
+       let c = R.Qc.reify_as_Rat sigma (comp t) in
        (R.Input.cte t, R.AffTerm.cte c)
      with
        R.RatReifyError -> addvar m t
@@ -72,19 +75,19 @@ let rec reify_aff (comp:compf) (m: R.Varmap.t) (t: Term.constr): R.Input.term * 
 (*************************)
 (* debugging reification *)
 
-let reify_term (comp:compf) (m: R.Varmap.t) (t: Term.constr): Term.constr =
-  let (t, a) = reify_aff comp m t in
+let reify_term (sigma: Evd.evar_map) (comp:compf) (m: R.Varmap.t) (t: EConstr.constr): EConstr.constr =
+  let (t, a) = reify_aff sigma comp m t in
   (* R.print_debug (R.Input.export t);
      R.AffTerm.print a; *)
   R.Input.export t
 
-let invert_sem (lc:Term.constr) (g:Term.constr): unit Proofview.tactic =
-  Proofview.Goal.enter { Proofview.Goal.enter = fun gl ->
+let invert_sem (lc:EConstr.constr) (g:EConstr.constr): unit Proofview.tactic =
+  Proofview.Goal.enter (fun gl ->
     let rcstr = Lazy.force R.Input._rcstr in
     let term = Lazy.force R.Input._term in
     let env = Proofview.Goal.env gl in
-    let evm = Sigma.to_evar_map (Proofview.Goal.sigma gl) in
-    let rcomp = Redexpr.cbv_vm env evm in
+    let sigma = Tacmach.New.project gl (*Proofview.Goal.sigma gl*) in
+    let rcomp = Redexpr.cbv_vm env sigma in
     let mycomp t = (
       (* print_endline "starting vm_compute";
          R.print_debug t; *)
@@ -94,16 +97,18 @@ let invert_sem (lc:Term.constr) (g:Term.constr): unit Proofview.tactic =
       t') in
     let m = R.Varmap.empty() in
     (* print_endline "\ntraverse list..."; *)
-    let l = R.List.map rcstr (R.Prod.set_fst term (fun t _ -> reify_term mycomp m t)) lc  in
+    let l = R.List.map sigma rcstr (R.Prod.set_fst sigma term (fun t _ -> reify_term sigma mycomp m t)) lc  in
     (* print_endline "to_varmap..."; *)
     let concl = R.Input.vplGoal l (R.Varmap.to_varmap m) g in
-    (* print_endline "change concl !";
-       R.print_debug concl; *)
+    (* 
+       print_endline "change concl !";
+       R.print_debug env sigma concl;
+    *)
     Tacticals.New.tclTHENLIST
       [
         Tactics.change_concl concl
       ]
-  }
+  )
 
 (**********)
 (* solver *)
@@ -122,15 +127,15 @@ let dummy vtype =
   let dummy_4 = M.run v dummy_3 in
   M.export vtype (M.bindHyp h dummy_4)
 
-let refreshed_evm (env:Environ.env) (evm: Evd.evar_map) (vtype: Term.types) =
+let refreshed_sigma (env:Environ.env) (sigma: Evd.evar_map) (vtype: EConstr.types) =
   let l = R.List.of_list (Lazy.force R.Input._rcstr) [] in
   let p = M.reduceRun l (dummy vtype) in
   (* R.print_debug p; *)
-  fst (Typing.type_of ~refresh:false env evm p)
+  fst (Typing.type_of ~refresh:false env sigma p)
 
-let reify_input (input: Cs.t list ref) (comp:compf) (m: R.Varmap.t) (t: Term.constr) (cmp: Term.constr): Term.constr =
-  let (t, a) = reify_aff comp m t in
-  let cmp = R.Input.reify_as_cmpT cmp in
+let reify_input (sigma: Evd.evar_map) (input: Cs.t list ref) (comp:compf) (m: R.Varmap.t) (t: EConstr.constr) (cmp: EConstr.constr): EConstr.constr =
+  let (t, a) = reify_aff sigma comp m t in
+  let cmp = R.Input.reify_as_cmpT sigma cmp in
   input := (Cs.mk2 cmp a.R.AffTerm.lin (Rat.neg a.R.AffTerm.cst)) :: (!input);
   R.Input.export t
 
@@ -253,30 +258,30 @@ let nowhere: Locus.clause = Locus.({ onhyps = Some []; concl_occs = NoOccurrence
       change (VplGoal (sem l m) g); 
       pose (a:=(reduceRun l p))
 *)  
-let run_solver (lc:Term.constr) (g:Term.constr) (a:Names.Id.t) : unit Proofview.tactic =
-  Proofview.Goal.enter { Proofview.Goal.enter = fun gl ->
+let run_solver (lc:EConstr.constr) (g:EConstr.constr) (a:Names.Id.t) : unit Proofview.tactic =
+  Proofview.Goal.enter (fun gl ->
     let rcstr = Lazy.force R.Input._rcstr in
     let term = Lazy.force R.Input._term in
     let env = Proofview.Goal.env gl in
-    let evm = Sigma.to_evar_map (Proofview.Goal.sigma gl) in
-    let rcomp = Redexpr.cbv_vm env evm in
+    let sigma = Proofview.Goal.sigma gl in
+    let rcomp = Redexpr.cbv_vm env sigma in
     let m = R.Varmap.empty() in
     let input = ref [] in
-    let l = R.List.map rcstr (R.Prod.set_fst term (reify_input input rcomp m)) lc in
+    let l = R.List.map sigma rcstr (R.Prod.set_fst sigma term (reify_input sigma input rcomp m)) lc in
     let m = R.Varmap.to_varmap m in
-    let evm, vtype = Evd.new_sort_variable Evd.univ_flexible_alg evm in
-    let vtype = Term.mkSort vtype in
+    let sigma, vtype = Evd.new_sort_variable Evd.univ_flexible_alg sigma in
+    let vtype = EConstr.mkSort vtype in
     let p = M.reduceRun l (M.export vtype (solver !input)) in
     let concl = R.Input.vplGoal l m g in
     (* print_endline "change concl:"; 
        R.print_debug p; *)
     Tacticals.New.tclTHENLIST
       [
-        Proofview.Unsafe.tclEVARS (refreshed_evm env evm vtype);
+        Proofview.Unsafe.tclEVARS (refreshed_sigma env sigma vtype);
         Tactics.change_concl concl;
         Tactics.letin_tac None (Names.Name a) p None nowhere
       ]
-  }
+  )
 
 (***************)
 (* coq tactics *)
