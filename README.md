@@ -1,6 +1,6 @@
 # VplTactic (A Coq Tactic from Verified Polyhedra Library)
 
-Current version: 0.2
+Current version: 0.2.1
 
 ## Introduction
 
@@ -88,8 +88,8 @@ A [HAL preprint](https://hal.archives-ouvertes.fr/hal-01505598) presents this ta
    of [VPL](https://github.com/VERIMAG-Polyhedra/VPL)
 
    * [coq](https://coq.inria.fr/)
-        __required version 8.6__
-       (available in OPAM)
+        __required version 8.7__
+       (use coq-vpltactic.0.2 for coq 8.6)
 
 2. Installation
 
