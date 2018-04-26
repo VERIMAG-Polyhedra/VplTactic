@@ -1,4 +1,4 @@
-# requires: coq8.6
+# requires: coq8.7
 
 .PHONY: clean tactic cacheclean test archclean install uninstall
 
