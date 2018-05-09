@@ -95,7 +95,7 @@ A [HAL preprint](https://hal.archives-ouvertes.fr/hal-01505598) presents this ta
 
    First, add the following repository in your opam system:
 
-          opam repo add vpl http://www-verimag.imag.fr/~boulme/opam-vpl
+          opam repo add vpl https://raw.githubusercontent.com/VERIMAG-Polyhedra/opam-vpl/master
 
    Then, install the following package:
 
