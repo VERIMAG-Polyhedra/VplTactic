@@ -45,7 +45,7 @@ Qed.
 
 
 Lemma ex_script (A:Type) (f: Qc -> A) (x1 x2 x3: Qc):
-f ((1 + 2*x1*x2)/(1-2*x3)) <> f (1+x2)
+  f ((1 + 2*x1*x2)/(1-2*x3)) <> f (1+x2)
 -> -(1 # 2) * x2 >= x1
 -> 2*x3 >= x2
 -> 3*x1 >= x2
@@ -57,7 +57,7 @@ Qed.
 
 
 Lemma ex_script_decompose (A:Type) (f: Qc -> A) (x1 x2 x3: Qc):
-f ((1 + 2*x1*x2)/(1-2*x3)) <> f (1+x2)
+  f ((1 + 2*x1*x2)/(1-2*x3)) <> f (1+x2)
 -> x1 <= -(1 # 2) * x2
 -> x2 <= 2*x3
 -> x2 <= 3*x1
