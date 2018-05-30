@@ -22,11 +22,21 @@ Lemma ex_intro (x: Qc) (f: Qc -> Qc):
 -> (f x) < (f 1)
 -> x < 1.
 Proof.
+  vpl_auto.
+Qed.
+
+Lemma ex_intro_decompose1 (x: Qc) (f: Qc -> Qc):
+   x <= 1
+-> (f x) < (f 1)
+-> x < 1.
+Proof.
+  intros.
   vpl.
   vpl.
 Qed.
 
-Lemma ex_intro_decompose (x: Qc) (f: Qc -> Qc):
+
+Lemma ex_intro_decompose2 (x: Qc) (f: Qc -> Qc):
    x <= 1
 -> (f x) < (f 1)
 -> x < 1.
@@ -56,7 +66,25 @@ Proof.
 Qed.
 
 
-Lemma ex_script_decompose (A:Type) (f: Qc -> A) (x1 x2 x3: Qc):
+Lemma ex_script_decompose1 (A:Type) (f: Qc -> A) (x1 x2 x3: Qc):
+  f ((1 + 2*x1*x2)/(1-2*x3)) <> f (1+x2)
+-> -(1 # 2) * x2 >= x1
+-> 2*x3 >= x2
+-> 3*x1 >= x2
+-> x1 >= -10
+-> x1 + x2 < x3.
+Proof.
+  cbv beta.
+  intros.
+  vpl.
+  intros; apply H.
+  apply f_equal.
+  field.
+  vpl.
+Qed.
+
+
+Lemma ex_script_decompose2 (A:Type) (f: Qc -> A) (x1 x2 x3: Qc):
   f ((1 + 2*x1*x2)/(1-2*x3)) <> f (1+x2)
 -> x1 <= -(1 # 2) * x2
 -> x2 <= 2*x3
@@ -78,6 +106,10 @@ Proof.
   vpl_compute rP. 
   trivial.
 Qed.
+
+
+
+(*** Other examples ***)
 
 
 Lemma bigex (A:Type) (f:A -> Qc) (g:Qc -> A) (v1 v2 v3 v4: Qc):
