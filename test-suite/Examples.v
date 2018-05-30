@@ -1,4 +1,17 @@
-(* Examples in ITP'17 submission *)
+(* Examples for ITP'18 *)
+
+Require Import ZArith.
+
+Local Open Scope Z_scope.
+
+Lemma ex_intro (x: Z) (f: Z -> Z):
+   x <= 1
+-> (f x) < (f 1)
+-> x < 1.
+Proof.
+  try omega.
+  idtac.
+Abort.
 
 Require Import QArith.
 Require Export Tactic.
