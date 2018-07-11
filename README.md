@@ -88,8 +88,8 @@ A [HAL preprint](https://hal.archives-ouvertes.fr/hal-01505598) presents this ta
    of [VPL](https://github.com/VERIMAG-Polyhedra/VPL)
 
    * [coq](https://coq.inria.fr/)
-        __required version 8.7__
-       (use coq-vpltactic.0.2 for coq 8.6)
+        __required version coq 8.8__
+       (use coq-vpltactic.0.2 for coq 8.6 or coq-vpltatic.0.2.1 for coq 8.7)
 
 2. Installation
 
