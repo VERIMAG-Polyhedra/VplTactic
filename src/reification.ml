@@ -52,7 +52,7 @@ let print_debug env sigma t =
 
 module Positive = struct
   let path = ["Coq" ; "Numbers"; "BinNums"]
-  let typ = init_constant path "positive"
+  (* let typ = init_constant path "positive" *)
   let xH =  init_constant path "xH"
   let _xO =  init_constant path "xO"
   let _xI =  init_constant path "xI"
@@ -180,7 +180,7 @@ module Input = struct
   let path = [ "VplTactic" ; "Input" ]
   let pathN = [ "VplTactic" ; "Input"; "Notation" ]
   let pathNum = [ "Vpl" ; "NumC" ]
-  let _pedraSem_correct = init_constant path "pedraSem_correct"
+  (* let _pedraSem_correct = init_constant path "pedraSem_correct" *)
   let _Empty_vm = init_constant path "Empty_vm"
   let _Node_vm = init_constant path "Node_vm"
   let _Var = init_constant path "Var"
@@ -205,7 +205,7 @@ module Input = struct
   type term = EConstr.constr
 
   let vplGoal l m g = lapp _vplGoal [| lapp _sem [| l; lapp _varmap_find [| m |] |]; g |]
-  let pedraSem_correct l m g = lapp _pedraSem_correct [| l; m; g |]
+  (* let pedraSem_correct l m g = lapp _pedraSem_correct [| l; m; g |] *)
     
   let cte x = lapp _Cte [| x |]
   let var x = fst x
@@ -229,9 +229,9 @@ end
 
 (* inspired from the module of the same name in plugins/quote/quote.ml *)
 module ConstrHashed = struct
-  type t = Term.constr
-  let equal = Term.eq_constr
-  let hash = Term.hash_constr
+  type t = Constr.t
+  let equal = Constr.equal
+  let hash = Constr.hash
 end
 module ConstrHashtbl = Hashtbl.Make (ConstrHashed)
 
