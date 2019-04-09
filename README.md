@@ -1,6 +1,6 @@
 # VplTactic (A Coq Tactic from Verified Polyhedra Library)
 
-Current version: 0.2.1
+Current version: 0.4.2
 
 ## Introduction
 
@@ -29,8 +29,9 @@ and [ERC Stator](http://stator.imag.fr/).
 
 ## Using VplTactic
 
-First, add the two following lines at the head of your Coq files:
+First, add the following lines at the head of your Coq files:
 
+    Require Import BinInt.
     Require Import VplTactic.Tactic.
     Add Field Qcfield: Qcft (decidable Qc_eq_bool_correct, constants [vpl_cte]).
 
@@ -77,7 +78,7 @@ If needed, you may also directly invoke some subcomponent of
 `vpl_reduce`, see file `theories/Tactic.v`.  You may also find
 examples in file `test-suite/*.v`.
 
-A [HAL preprint](https://hal.archives-ouvertes.fr/hal-01505598) presents this tactic in details.
+Our [ITP'18 paper](https://hal.archives-ouvertes.fr/hal-01505598) presents this tactic in details.
 
 
 ## Installation through [opam](https://opam.ocaml.org/)
@@ -88,8 +89,8 @@ A [HAL preprint](https://hal.archives-ouvertes.fr/hal-01505598) presents this ta
    of [VPL](https://github.com/VERIMAG-Polyhedra/VPL)
 
    * [coq](https://coq.inria.fr/)
-        __required version coq 8.8__
-       (use coq-vpltactic.0.2 for coq 8.6 or coq-vpltatic.0.2.1 for coq 8.7)
+        __required version coq 8.9__
+       (use older opam packages of coq-vpltactic for older versions of coq)
 
 2. Installation
 
@@ -102,9 +103,6 @@ A [HAL preprint](https://hal.archives-ouvertes.fr/hal-01505598) presents this ta
           opam install coq-vpltactic
 
   This will also install other `opam-vpl` packages.
-
-In case of trouble with this `opam` install, you should read
-[this](https://github.com/VERIMAG-Polyhedra/opam-vpl/blob/master/README.md#using-the-vpl-on-a-vagrantvirtualbox-virtual-machine).
 
 ## Browsing the sources
 
