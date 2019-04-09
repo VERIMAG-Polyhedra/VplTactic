@@ -30,7 +30,7 @@ let raise_unknown_constructor s =
     global reference into a constr.
 *)
 let find_constant contrib dir s =
-  lazy (EConstr.of_constr (Universes.constr_of_global (Coqlib.find_reference contrib dir s)))
+  lazy (EConstr.of_constr (UnivGen.constr_of_global (Coqlib.find_reference contrib dir s)))
 
 let init_constant dir s = find_constant contrib_name dir s
 
@@ -48,7 +48,7 @@ let mkLambda (t:EConstr.types) (b:EConstr.constr): EConstr.constr =
   EConstr.mkLambda (Names.Name.Anonymous, t, b)
   
 let print_debug env sigma t =
-  Printf.printf "--- BEGIN DEBUG TERM ---\n%s\n---------------\n%!" (Pp.string_of_ppcmds (Termops.print_constr_env env sigma t))
+  Printf.printf "--- BEGIN DEBUG TERM ---\n%s\n---------------\n%!" (Pp.string_of_ppcmds (Printer.pr_econstr_env env sigma t))
 
 module Positive = struct
   let path = ["Coq" ; "Numbers"; "BinNums"]
@@ -63,9 +63,9 @@ module Positive = struct
         Rat.Z.orL acc (Rat.Z.shiftL Rat.Z.u s)
       else 
         match decomp_term sigma p with
-        | Term.App(head, args) when EConstr.eq_constr sigma head (Lazy.force _xO) ->
+        | Constr.App(head, args) when EConstr.eq_constr sigma head (Lazy.force _xO) ->
            reify_with_shift (s+1) acc args.(0)
-        | Term.App(head, args) when EConstr.eq_constr sigma head (Lazy.force _xI) ->
+        | Constr.App(head, args) when EConstr.eq_constr sigma head (Lazy.force _xI) ->
            reify_with_shift (s+1) (Rat.Z.orL acc (Rat.Z.shiftL Rat.Z.u s)) args.(0)  
         | _ -> raise RatReifyError
     in fun p -> reify_with_shift 0 Rat.Z.z p
@@ -106,9 +106,9 @@ struct
       Rat.Z.z
     else 
       match decomp_term sigma p with
-      | Term.App(head, args) when EConstr.eq_constr sigma head (Lazy.force _Zpos) ->
+      | Constr.App(head, args) when EConstr.eq_constr sigma head (Lazy.force _Zpos) ->
          Positive.reify_as_RatZ sigma args.(0)
-      | Term.App(head, args) when EConstr.eq_constr sigma head (Lazy.force _Zneg) ->
+      | Constr.App(head, args) when EConstr.eq_constr sigma head (Lazy.force _Zneg) ->
          Rat.Z.neg (Positive.reify_as_RatZ sigma args.(0))
       | _ -> raise RatReifyError
     
@@ -137,9 +137,9 @@ module Qc = struct
     
   let reify_as_Rat sigma p =
     match decomp_term sigma p with
-    | Term.App(head, args) when EConstr.eq_constr sigma head (Lazy.force _Qcmake) -> (
+    | Constr.App(head, args) when EConstr.eq_constr sigma head (Lazy.force _Qcmake) -> (
        match decomp_term sigma args.(0) with
-       | Term.App(head, args) when EConstr.eq_constr sigma head (Lazy.force _Qmake) ->
+       | Constr.App(head, args) when EConstr.eq_constr sigma head (Lazy.force _Qmake) ->
           let num = Z.reify_as_RatZ sigma args.(0) in
           let den = Positive.reify_as_RatZ sigma args.(1) in
           Rat.ofZ num den
@@ -333,7 +333,7 @@ module List = struct
     let cons = Lazy.force _cons in
     let rec map_acc l acc =
       match decomp_term sigma l with
-      | Term.App(head, args) when EConstr.eq_constr sigma head cons ->
+      | Constr.App(head, args) when EConstr.eq_constr sigma head cons ->
          map_acc args.(2) (EConstr.mkApp (cons, [| ty; f args.(1); acc|]))
       | _ ->
          acc
@@ -354,7 +354,7 @@ module Prod = struct
   let set_fst sigma ty f p =
     let pair = Lazy.force _pair in
     match decomp_term sigma p with
-    | Term.App(head, args) when EConstr.eq_constr sigma head pair ->
+    | Constr.App(head, args) when EConstr.eq_constr sigma head pair ->
       EConstr.mkApp (pair, [| ty; args.(1); (f args.(2) args.(3)); args.(3) |])
     | _ -> raise_unknown_constructor "Prod"
 end

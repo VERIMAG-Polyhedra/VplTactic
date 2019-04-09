@@ -107,7 +107,6 @@ Proof.
   idtac.
 Abort.
 
-
 Add Field Qcfield: Qcft (decidable Qc_eq_bool_correct, constants [vpl_cte]).
 
 Lemma demo2a (v1 v2 v3 v4: Qc) :

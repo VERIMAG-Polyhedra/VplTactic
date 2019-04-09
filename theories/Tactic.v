@@ -68,7 +68,7 @@ Ltac vpl_cte t :=
   | _ => InitialRing.NotConstant
   end.
 
-Add Field Qcfield: Qcft (decidable Qc_eq_bool_correct, constants [vpl_cte]).
+Global Add Field Qcfield: Qcft (decidable Qc_eq_bool_correct, constants [vpl_cte]).
 
 Hint Extern 4 (_ = _) => field: vpl.
 Hint Extern 4 (_ <= _)%Qc => vpl_trivial: vpl.

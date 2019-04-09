@@ -23,13 +23,13 @@ module M = R.Reduction
 (* reification *)
 let check_may_cte (sigma: Evd.evar_map) (t: EConstr.constr): unit =
   match R.decomp_term sigma t with
-  | Term.App(head, _) when
+  | Constr.App(head, _) when
      (EConstr.eq_constr sigma head (Lazy.force R.Input.tag_cte) ||
         EConstr.eq_constr sigma head (Lazy.force R.Qc._Qcmake) ||
      EConstr.eq_constr sigma head (Lazy.force R.Input._Z2Qc) ) -> ()
-  | Term.App(head, args) when EConstr.eq_constr sigma head (Lazy.force R.Qc._Q2Qc) -> (
+  | Constr.App(head, args) when EConstr.eq_constr sigma head (Lazy.force R.Qc._Q2Qc) -> (
      match R.decomp_term sigma args.(0) with
-     |  Term.App(head, args) when EConstr.eq_constr sigma head (Lazy.force R.Qc._Qmake) -> ()
+     |  Constr.App(head, args) when EConstr.eq_constr sigma head (Lazy.force R.Qc._Qmake) -> ()
      | _ -> raise R.RatReifyError)  
   | _ -> raise R.RatReifyError
 
@@ -39,18 +39,18 @@ let addvar (m: R.Varmap.t) (t: EConstr.constr):  R.Input.term * R.AffTerm.t =
 let rec reify_aff (sigma: Evd.evar_map) (comp:compf) (m: R.Varmap.t) (t: EConstr.constr): R.Input.term * R.AffTerm.t =
   (* R.print_debug t; *)
   match R.decomp_term sigma t with  
-  | Term.App(head, args) when EConstr.eq_constr sigma head (Lazy.force R.Qc._Qcplus) -> (
+  | Constr.App(head, args) when EConstr.eq_constr sigma head (Lazy.force R.Qc._Qcplus) -> (
      let (t1,a1) = reify_aff sigma comp m args.(0) in
      let (t2,a2) = reify_aff sigma comp m args.(1) in
      (R.Input.add t1 t2, R.AffTerm.add a1 a2))
-  | Term.App(head, args) when EConstr.eq_constr sigma head (Lazy.force R.Qc._Qcopp) -> (
+  | Constr.App(head, args) when EConstr.eq_constr sigma head (Lazy.force R.Qc._Qcopp) -> (
      let (t0,a0) = reify_aff sigma comp m args.(0) in
      (R.Input.opp t0, R.AffTerm.opp a0))
-  | Term.App(head, args) when EConstr.eq_constr sigma head (Lazy.force R.Qc._Qcminus) -> (
+  | Constr.App(head, args) when EConstr.eq_constr sigma head (Lazy.force R.Qc._Qcminus) -> (
      let (t1,a1) = reify_aff sigma comp m args.(0) in
      let (t2,a2) = reify_aff sigma comp m args.(1) in
      (R.Input.sub t1 t2, R.AffTerm.sub a1 a2))
-  | Term.App(head, args) when EConstr.eq_constr sigma head (Lazy.force R.Qc._Qcmult) -> (
+  | Constr.App(head, args) when EConstr.eq_constr sigma head (Lazy.force R.Qc._Qcmult) -> (
      let s = R.Varmap.get_state m in
      let (t1, a1) = reify_aff sigma comp m args.(0) in
      let (t2, a2) = reify_aff sigma comp m args.(1) in
