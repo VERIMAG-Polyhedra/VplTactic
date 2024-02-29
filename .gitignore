@@ -9,6 +9,7 @@
 *.glob
 *.dv
 *.aux
+.coqdeps.d
 
 # ocaml files
 src/vpl_plugin.cmxs
@@ -21,6 +22,7 @@ src/vpl_plugin.cmxs
 *.cmxa
 *.ml.d
 *.mllib.d
+*.mlpack.d
 *.ml4.d
 *.mli.d
 

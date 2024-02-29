@@ -9,10 +9,8 @@ open Vpl
 (*i*)
 
 module Rat = Scalar.Rat
-module Vec = Vector.Rat.Positive
-module Var = Var.Positive
-module Cs = Cstr.Rat.Positive
-module Cons = IneqSet.Cons
+module Vec = Vector.Rat
+module Cs = Cstr.Rat
 
 type compf = EConstr.constr -> EConstr.constr
   

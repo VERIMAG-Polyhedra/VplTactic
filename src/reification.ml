@@ -9,8 +9,7 @@
 open Vpl
 
 module Rat = Scalar.Rat
-module Vec = Vector.Rat.Positive
-module Var = Var.Positive
+module Vec = Vector.Rat
 exception RatReifyError
 
 (* The contrib name is used to locate errors when loading constrs *)
@@ -60,29 +59,29 @@ module Positive = struct
   let reify_as_RatZ sigma =
     let rec reify_with_shift (s:int) acc p =
       if EConstr.eq_constr sigma p (Lazy.force xH) then
-        Rat.Z.orL acc (Rat.Z.shiftL Rat.Z.u s)
+        Z.logor acc (Z.shift_left Scalar.Int.u s)
       else 
         match decomp_term sigma p with
         | Constr.App(head, args) when EConstr.eq_constr sigma head (Lazy.force _xO) ->
            reify_with_shift (s+1) acc args.(0)
         | Constr.App(head, args) when EConstr.eq_constr sigma head (Lazy.force _xI) ->
-           reify_with_shift (s+1) (Rat.Z.orL acc (Rat.Z.shiftL Rat.Z.u s)) args.(0)  
+           reify_with_shift (s+1) (Z.logor acc (Z.shift_left Scalar.Int.u s)) args.(0)
         | _ -> raise RatReifyError
-    in fun p -> reify_with_shift 0 Rat.Z.z p
+    in fun p -> reify_with_shift 0 Scalar.Int.z p
          
   let xO p = lapp _xO [| p |]
   let xI p = lapp _xI [| p |]
 
   let from_RatZ =
     let rec from_RatZ p =
-      if Rat.Z.cmp p Rat.Z.u <= 0 then
+      if Scalar.Int.cmp p Scalar.Int.u <= 0 then
         Lazy.force xH
-      else if Rat.Z.cmp (Rat.Z.lAnd p Rat.Z.u) Rat.Z.u = 0 then
-        xI (from_RatZ (Rat.Z.shiftR p 1))
+      else if Scalar.Int.cmp (Z.logand p Scalar.Int.u) Scalar.Int.u = 0 then
+        xI (from_RatZ (Z.shift_right p 1))
       else
-        xO (from_RatZ (Rat.Z.shiftR p 1))
+        xO (from_RatZ (Z.shift_right p 1))
     in fun p ->
-      assert (Rat.Z.cmp p Rat.Z.u >= 0);
+      assert (Scalar.Int.cmp p Scalar.Int.u >= 0);
       (from_RatZ p)
 
   let rec from_Var p =
@@ -103,23 +102,23 @@ struct
     
   let reify_as_RatZ sigma p =
     if EConstr.eq_constr sigma p (Lazy.force _Z0) then
-      Rat.Z.z
+      Scalar.Int.z
     else 
       match decomp_term sigma p with
       | Constr.App(head, args) when EConstr.eq_constr sigma head (Lazy.force _Zpos) ->
          Positive.reify_as_RatZ sigma args.(0)
       | Constr.App(head, args) when EConstr.eq_constr sigma head (Lazy.force _Zneg) ->
-         Rat.Z.neg (Positive.reify_as_RatZ sigma args.(0))
+         Scalar.Int.neg (Positive.reify_as_RatZ sigma args.(0))
       | _ -> raise RatReifyError
     
   let from_RatZ x =
-    let sign = Rat.Z.cmp Rat.Z.z x in
+    let sign = Scalar.Int.cmp Scalar.Int.z x in
     if sign = 0 then
       Lazy.force _Z0
     else if sign < 0 then
       lapp _Zpos [| Positive.from_RatZ x |]
     else
-      lapp _Zneg [| Positive.from_RatZ (Rat.Z.neg x) |]
+      lapp _Zneg [| Positive.from_RatZ (Scalar.Int.neg x) |]
     
 end 
 
@@ -217,11 +216,11 @@ module Input = struct
     
   let reify_as_cmpT sigma t = 
     if EConstr.eq_constr sigma t (Lazy.force _LeT) then
-      Cstr.Le
+      Cstr_type.Le
     else if EConstr.eq_constr sigma t (Lazy.force _EqT) then
-      Cstr.Eq
+      Cstr_type.Eq
     else if EConstr.eq_constr sigma t (Lazy.force _LtT) then
-      Cstr.Lt
+      Cstr_type.Lt
     else
       assert false
 

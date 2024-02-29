@@ -7,8 +7,7 @@
 *)
 open Vpl
 module Rat = Scalar.Rat
-module Vec = Vector.Rat.Positive
-module Var = Var.Positive
+module Vec = Vector.Rat
 exception RatReifyError
   
 exception DecompositionError of string
@@ -74,7 +73,7 @@ sig
 
   (* [vplGoal l m g] is a short cut for Coq [vplGoal (sem l m) g] *) 
   val vplGoal: EConstr.constr -> varmap -> EConstr.constr -> EConstr.constr
-  val reify_as_cmpT: Evd.evar_map -> EConstr.constr -> Cstr.cmpT
+  val reify_as_cmpT: Evd.evar_map -> EConstr.constr -> Cstr_type.cmpT
 end
   
 (** Reduction of Vpl Library *)
@@ -166,16 +165,16 @@ end
 module Positive:
 sig
   (* raise [RatReifyError] in case of non-closed term *)
-  val reify_as_RatZ: Evd.evar_map -> EConstr.constr -> Rat.Z.t
-  val from_RatZ: Rat.Z.t -> EConstr.constr
+  val reify_as_RatZ: Evd.evar_map -> EConstr.constr -> Scalar.Int.t
+  val from_RatZ: Scalar.Int.t -> EConstr.constr
 end
 
 (* Coq Z *) 
 module Z:
 sig
   (* raise [RatReifyError] in case of non-closed term *)
-  val reify_as_RatZ: Evd.evar_map -> EConstr.constr -> Rat.Z.t
-  val from_RatZ: Rat.Z.t -> EConstr.constr
+  val reify_as_RatZ: Evd.evar_map -> EConstr.constr -> Scalar.Int.t
+  val from_RatZ: Scalar.Int.t -> EConstr.constr
 end 
   
 (* Coq Qc *) 

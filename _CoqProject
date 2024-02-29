@@ -4,7 +4,7 @@
 src/reification.mli
 src/reification.ml
 src/vpltactics.ml4
-src/vpl_plugin.mllib
+src/vpl_plugin.mlpack
 theories/Input.v
 theories/Output.v
 theories/Reduction.v
